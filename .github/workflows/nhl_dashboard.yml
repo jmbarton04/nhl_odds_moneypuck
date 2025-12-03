@@ -1,0 +1,45 @@
+name: NHL Odds + MoneyPuck Dashboard
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   # Runs every day at 7 AM Eastern (12:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install required R packages
+        run: |
+          Rscript -e "install.packages(c('httr','jsonlite','dplyr','readr','lubridate','purrr','ggplot2'))"
+
+      - name: Run Odds API script
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          Rscript R/01_download_odds.R
+
+      - name: Run MoneyPuck script
+        run: |
+          Rscript R/02_download_moneypuck.R
+
+      - name: Run merge + visualization script
+        run: |
+          Rscript R/03_merge_visualize.R
+
+      - name: Commit and push results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ plots/
+          git diff --staged --quiet || git commit -m "Daily dashboard update: $(date)"
+          git push
