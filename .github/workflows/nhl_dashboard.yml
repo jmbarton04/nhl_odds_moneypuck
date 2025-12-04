@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0         # 🔥 THIS WAS MISSING AND IS REQUIRED
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
@@ -45,5 +47,3 @@ jobs:
           commit_message: "Daily update: $(date)"
           branch: main
           pull: true
-
-
