@@ -44,3 +44,4 @@ jobs:
         with:
           commit_message: "Daily update: $(date)"
           branch: main
+          pull: true
