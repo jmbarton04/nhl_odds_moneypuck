@@ -39,9 +39,12 @@ jobs:
         run: |
           Rscript R/merge_visualize.R
 
-      - name: Commit updates
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Daily update: $(date)"
-          branch: main
-          pull: true
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
+          git add -A
+          git commit -m "Daily update: $(date)" || echo "No changes to commit"
+          git push
+
