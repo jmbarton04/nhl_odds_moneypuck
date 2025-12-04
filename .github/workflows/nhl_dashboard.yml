@@ -26,15 +26,15 @@ jobs:
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: |
-          Rscript R/01_download_odds.R
+          Rscript R/download_odds.R
 
       - name: Run MoneyPuck script
         run: |
-          Rscript R/02_download_moneypuck.R
+          Rscript R/download_moneypuck.R
 
       - name: Run merge + visualization script
         run: |
-          Rscript R/03_merge_visualize.R
+          Rscript R/merge_visualize.R
 
       - name: Commit and push results
         run: |
