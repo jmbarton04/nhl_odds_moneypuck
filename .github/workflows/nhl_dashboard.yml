@@ -5,6 +5,9 @@ on:
     - cron: "0 12 * * *"   # Runs every day at 7 AM Eastern (12:00 UTC)
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-dashboard:
     runs-on: ubuntu-latest
