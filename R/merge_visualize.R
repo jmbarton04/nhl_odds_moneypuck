@@ -2,9 +2,13 @@ library(dplyr)
 library(readr)
 library(ggplot2)
 
+# -------------------------
+# Load today's data
+# -------------------------
 games_df <- read_csv("data/games_today.csv", show_col_types = FALSE)
 perf_df  <- read_csv("data/moneypuck_today.csv", show_col_types = FALSE)
 
+# Lookup table for team codes (matches MoneyPuck)
 team_lookup <- tibble(
   home_team = c(
     "Anaheim Ducks","Arizona Coyotes","Boston Bruins","Buffalo Sabres",
@@ -24,12 +28,17 @@ team_lookup <- tibble(
   )
 )
 
-merged_df <- games_df %>%
+# -------------------------
+# Merge today's dataset
+# -------------------------
+merged_today <- games_df %>%
   left_join(team_lookup, by = "home_team") %>%
   left_join(perf_df, by = c("team_code" = "team"))
 
-# plot
-p <- merged_df %>%
+# -------------------------
+# Plot of Market vs MoneyPuck
+# -------------------------
+p <- merged_today %>%
   ggplot(aes(x = home_prob,
              y = xGoalsPercentage,
              label = home_team)) +
@@ -45,3 +54,20 @@ p <- merged_df %>%
 
 dir.create("plots", showWarnings = FALSE)
 ggsave("plots/today_plot.png", p, width = 10, height = 6)
+
+# -------------------------
+# Historical logging
+# -------------------------
+if (!dir.exists("history")) dir.create("history")
+
+history_file <- "history/games_history.csv"
+
+merged_today <- merged_today %>%
+  mutate(run_date = Sys.Date())
+
+if (!file.exists(history_file)) {
+  write_csv(merged_today, history_file)
+} else {
+  write_csv(merged_today, history_file, append = TRUE)
+}
+
