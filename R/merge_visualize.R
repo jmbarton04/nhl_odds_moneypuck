@@ -54,20 +54,3 @@ p <- merged_today %>%
 
 dir.create("plots", showWarnings = FALSE)
 ggsave("plots/today_plot.png", p, width = 10, height = 6)
-
-# -------------------------
-# Historical logging
-# -------------------------
-if (!dir.exists("history")) dir.create("history")
-
-history_file <- "history/games_history.csv"
-
-merged_today <- merged_today %>%
-  mutate(run_date = Sys.Date())
-
-if (!file.exists(history_file)) {
-  write_csv(merged_today, history_file)
-} else {
-  write_csv(merged_today, history_file, append = TRUE)
-}
-
