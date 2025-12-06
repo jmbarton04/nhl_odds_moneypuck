@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # FULL history so pulls work properly
+          fetch-depth: 0
 
       - name: Pull latest changes
         run: |
