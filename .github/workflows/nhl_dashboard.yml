@@ -44,6 +44,6 @@ jobs:
       - name: Commit updates
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Daily update: $(date)"
+          commit_message: "Daily update"
           branch: main
           pull: true
