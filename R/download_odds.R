@@ -1,13 +1,3 @@
-# -----------------------------
-# Load Required Libraries
-# -----------------------------
-# httr: handles API requests (GET, POST, etc.)
-# jsonlite: parses JSON returned from API
-# dplyr: data wrangling + pipes
-# readr: write CSV files
-# lubridate: convert timestamps
-# purrr: map_dfr for list → dataframe conversion
-
 
 library(httr)
 library(jsonlite)
@@ -16,16 +6,11 @@ library(readr)
 library(lubridate)
 library(purrr)
 
-# -----------------------------
-# API Key and Request URL
-# -----------------------------
+## got API key
 
 api_key <- "5282f67c29680a6e2eb36b79b1305ac5"
 
-# Construct full Odds API endpoint URL
-# h2h = head-to-head (moneyline odds)
-# regions=us ensures US sportsbooks
-# oddsFormat=american returns +150 / -180 style odds
+## scraped the API
 
 odds_url <- paste0(
   "https://api.the-odds-api.com/v4/sports/icehockey_nhl/odds/?",
