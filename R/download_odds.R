@@ -1,3 +1,14 @@
+# -----------------------------
+# Load Required Libraries
+# -----------------------------
+# httr: handles API requests (GET, POST, etc.)
+# jsonlite: parses JSON returned from API
+# dplyr: data wrangling + pipes
+# readr: write CSV files
+# lubridate: convert timestamps
+# purrr: map_dfr for list → dataframe conversion
+
+
 library(httr)
 library(jsonlite)
 library(dplyr)
@@ -5,7 +16,16 @@ library(readr)
 library(lubridate)
 library(purrr)
 
+# -----------------------------
+# API Key and Request URL
+# -----------------------------
+
 api_key <- "5282f67c29680a6e2eb36b79b1305ac5"
+
+# Construct full Odds API endpoint URL
+# h2h = head-to-head (moneyline odds)
+# regions=us ensures US sportsbooks
+# oddsFormat=american returns +150 / -180 style odds
 
 odds_url <- paste0(
   "https://api.the-odds-api.com/v4/sports/icehockey_nhl/odds/?",
@@ -15,14 +35,21 @@ odds_url <- paste0(
   "oddsFormat=american"
 )
 
+## API request
 odds_response <- GET(odds_url)
+
+## Stops if API fails
 
 if (status_code(odds_response) != 200) {
   stop("Odds API request failed.")
 }
 
+## Converts JSON to a list in R
+
 odds_data <- content(odds_response, as = "text", encoding = "UTF-8") %>%
   fromJSON(simplifyVector = FALSE)
+
+## gets all the moneylines prices for each team
 
 get_price_for_team <- function(outcomes, team_name) {
   if (length(outcomes) == 0) return(NA_real_)
@@ -32,6 +59,8 @@ get_price_for_team <- function(outcomes, team_name) {
   as.numeric(outcomes[[idx[1]]]$price)
 }
 
+## Built a data frame for all the games with prices and teams
+                      
 games_df <- map_dfr(
   odds_data,
   function(g) {
@@ -56,6 +85,8 @@ games_df <- map_dfr(
   }
 )
 
+## converted odds into probabilities for the visualization                      
+                      
 implied_prob <- function(price) {
   ifelse(
     is.na(price),
@@ -66,6 +97,7 @@ implied_prob <- function(price) {
   )
 }
 
+## added probabilities to the data frame                      
 games_df <- games_df %>%
   mutate(
     home_prob = implied_prob(home_price),
