@@ -2,8 +2,12 @@ library(dplyr)
 library(readr)
 library(ggplot2)
 
+## read the csv files from odds and moneypuck scripts
+
 games_df <- read_csv("data/games_today.csv", show_col_types = FALSE)
 perf_df  <- read_csv("data/moneypuck_today.csv", show_col_types = FALSE)
+
+## created a lookup table to map teams to abbreviations
 
 team_lookup <- tibble(
   home_team = c(
@@ -23,6 +27,8 @@ team_lookup <- tibble(
     "PIT","SJS","SEA","STL","TBL","TOR","UTA","VAN","VGK","WSH","WPG"
   )
 )
+
+## merged the data frames
 
 merged_df <- games_df %>%
   left_join(team_lookup, by = "home_team") %>%
